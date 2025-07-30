@@ -1,16 +1,8 @@
-import firebase from 'firebase/compat/app'
-import 'firebase/compat/auth'
-import 'firebase/compat/firestore'
-import 'firebase/compat/storage'
-// const firebaseConfig = {
-//     apiKey: "AIzaSyCggZCcBun0cwNfOWGC2K8pZcgIRWMfqwY",
-//     authDomain: "olx-sijeesh.firebaseapp.com",
-//     projectId: "olx-sijeesh",
-//     storageBucket: "olx-sijeesh.appspot.com",
-//     messagingSenderId: "767411886432",
-//     appId: "1:767411886432:web:2ef6862afc88f2c423a605",
-//     measurementId: "G-4ELNR9DJHL"
-//   };
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
+
 const firebaseConfig = {
   apiKey: "AIzaSyDSdo8hr_kQVK4tgdMnKNDzn0vq6hwOtwE",
   authDomain: "sellup-fdede.firebaseapp.com",
@@ -21,4 +13,19 @@ const firebaseConfig = {
   measurementId: "G-NY5Y14K8XC"
 };
 
-  export const Firebase= firebase.initializeApp(firebaseConfig)//named export
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
+// Initialize Firebase services
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+export const storage = getStorage(app);
+
+// Export the app for backward compatibility with existing components
+export const Firebase = {
+  auth: () => auth,
+  firestore: () => db,
+  storage: () => storage
+};
+
+export default app;

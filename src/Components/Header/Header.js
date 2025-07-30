@@ -3,7 +3,6 @@ import { useHistory } from "react-router";
 import { AllPostContext } from "../../contextStore/AllPostContext";
 import { PostContext } from "../../contextStore/PostContext";
 import "./Header.css";
-// import OlxLogo from "../../assets/OlxLogo";
 import sellupLogo from "../../download.png";
 import SearchIcon from "../../assets/SearchIcon"
 import Arrow from "../../assets/Arrow";
@@ -11,14 +10,17 @@ import SellButton from "../../assets/SellButton";
 import SellButtonPlus from "../../assets/SellButtonPlus";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../contextStore/AuthContext";
-import { Firebase } from "../../firebase/config";
+import { auth } from "../../firebase/config";
+import { signOut } from "firebase/auth";
 import Search from "../Search/Search";
+
 function Header() {
   const{allPost}=useContext(AllPostContext)
   const{setPostContent}=useContext(PostContext)
   const history = useHistory();
   const [filteredData, setFilteredData] = useState([]);
   const [wordEntered, setWordEntered] = useState("");
+
   const handleFilter = (event) => {
     const searchWord = event.target.value;
     setWordEntered(searchWord);
@@ -32,98 +34,98 @@ function Header() {
       setFilteredData(newFilter);
     }
   };
+
   const clearInput = () => {
     setFilteredData([]);
     setWordEntered("");
   };
+
   const handleSelectedSearch=(value)=>{
        setPostContent(value)
-       history.push("/view")
-
+    history.push("/view")
   }
+
   const handleEmptyClick=()=>{
      alert("No items found.., please search by product name");
   }
+
   const { user } = useContext(AuthContext);
   
-  const logoutHandler = () => {
-    Firebase.auth()
-      .signOut()
-      .then(() => {
-        history.push("/login");
-      });
+  const logoutHandler = async () => {
+    try {
+      await signOut(auth);
+      history.push("/login");
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
   };
+
   return (
     <div className="headerParentDiv">
-      <div className="headerChildDiv">
+      <div className="childDiv">
         <div className="brandName">
-          <img
-            src={sellupLogo}
-            alt="SellUp Logo"
-            onClick={() => history.push("/")}
-            height={50}
-            width={50}
-            className="headerLogo"
-          />
+          <Link to="/">
+            <img src={sellupLogo} alt="SellUp Logo" />
+          </Link>
         </div>
         <div className="placeSearch">
-          <input type="text" 
-          placeholder="Search specific product..."
-          value={wordEntered}
-          onChange={handleFilter}
-        />{filteredData.length === 0 ? (
-          <div onClick={handleEmptyClick}> <SearchIcon /> </div>
-         ) : (
-           <div id="clearBtn"  onClick={clearInput} > <Arrow></Arrow></div>
-         )}
-          {filteredData.length !== 0 && (
-        <div className="dataResult-header">
-          {filteredData.slice(0, 15).map((value, key) => {
-            return (
-              <div key={key} className="dataItem-header" onClick={()=>handleSelectedSearch(value)}>
-                <p>{value.name} </p>
-              </div>
-            );
-          })}
-        </div>
-      )}
-         
+          <SearchIcon></SearchIcon>
+          <input type="text" placeholder="India" />
+          <Arrow></Arrow>
         </div>
         <div className="productSearch">
-          <Search />
+          <div className="input">
+            <input
+              type="text"
+              placeholder="Find car,mobile phone and more..."
+              value={wordEntered}
+              onChange={handleFilter}
+            />
+          </div>
+          <div className="searchAction">
+            <SearchIcon color="#a61a32"></SearchIcon>
+          </div>
         </div>
-        
         <div className="language">
           <span> ENGLISH </span>
           <Arrow></Arrow>
         </div>
         <div className="loginPage">
           {user ? (
-            user.displayName
+            <div className="user-section">
+              <span className="user-name">Hi, {user.displayName || user.email}</span>
+              <button onClick={logoutHandler} className="logout-btn">
+                Logout
+              </button>
+            </div>
           ) : (
             <Link to="/login">
               <span>Login</span>
             </Link>
           )}
-          <hr />
         </div>
-        {user && (
-          <span onClick={logoutHandler} className="logout-span">
-            Logout
-          </span>
-        )}
-        
-        <Link to="/create">
-          {" "}
-          <div className="sellMenu">
+        <div className="sellMenu">
+          <Link to="/create">
             <SellButton></SellButton>
-            <div className="sellMenuContent">
-              <SellButtonPlus></SellButtonPlus>
-              <span>SELL</span>
-            </div>
-          </div>
-        </Link>
+            <span>SELL</span>
+          </Link>
+        </div>
       </div>
+      {filteredData.length !== 0 && (
+        <div className="dataResult">
+          {filteredData.slice(0, 15).map((value, key) => {
+            return (
+              <div
+                key={key}
+                className="dataItem"
+                onClick={() => handleSelectedSearch(value)}
+              >
+                <p>{value.name}</p>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

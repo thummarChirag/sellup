@@ -16,8 +16,8 @@ function Banner() {
               onChange={(e) => {
                 setCategory(e.target.value);
               }}
+              className="category-select"
             >
-              {" "}
               <option value="null">ALL CATEGORIES</option>
               <option value="Cars">Cars</option>
               <option value="Cameras & Lenses">Cameras & Lenses</option>
@@ -28,19 +28,49 @@ function Banner() {
             </select>
           </div>
           <div className="otherQuickOptions">
-            <span onClick={()=>setCategory("Cars")} >Cars</span>
-            <span onClick={()=>setCategory("Cameras & Lenses")} >Cameras & Lenses</span>
-            <span onClick={()=>setCategory("Computers & Laptops")} >Computers & Laptops</span>
-            <span onClick={()=>setCategory("Mobile Phones")} >Mobile Phones</span>
-            <span onClick={()=>setCategory("Motorcycles")} >Motorcycles</span>
-            <span onClick={()=>setCategory("Tablets")} >Tablets</span>
+            <span
+              onClick={() => setCategory("Cars")}
+              className={category === "Cars" ? "active" : ""}
+            >
+              Cars
+            </span>
+            <span
+              onClick={() => setCategory("Cameras & Lenses")}
+              className={category === "Cameras & Lenses" ? "active" : ""}
+            >
+              Cameras & Lenses
+            </span>
+            <span
+              onClick={() => setCategory("Computers & Laptops")}
+              className={category === "Computers & Laptops" ? "active" : ""}
+            >
+              Computers & Laptops
+            </span>
+            <span
+              onClick={() => setCategory("Mobile Phones")}
+              className={category === "Mobile Phones" ? "active" : ""}
+            >
+              Mobile Phones
+            </span>
+            <span
+              onClick={() => setCategory("Motorcycles")}
+              className={category === "Motorcycles" ? "active" : ""}
+            >
+              Motorcycles
+            </span>
+            <span
+              onClick={() => setCategory("Tablets")}
+              className={category === "Tablets" ? "active" : ""}
+            >
+              Tablets
+            </span>
           </div>
         </div>
         <div className="banner">
-          <img src="../../../Images/banner copy.png" alt="" />
+          <img src="../../../Images/banner copy.png" alt="Banner" className="banner-image" />
         </div>
       </div>
-     { category!=null && <DynamicPosts category={category}/>  }
+      {category != null && <DynamicPosts category={category} />}
     </div>
   );
 }
